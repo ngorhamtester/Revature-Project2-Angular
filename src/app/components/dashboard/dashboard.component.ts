@@ -48,20 +48,20 @@ export class DashboardComponent implements OnInit
   askSpotify1():void
   {
     this.apiExtension = <HTMLInputElement>document.getElementById('dashboardAPIExtension'); 
-    this.askSpotify(this.handleRequestObject, this.apiExtension.value);
+    this.askSpotify(this.handleRequestObject, this.apiExtension.value, "GET", null);
   }
 
 
   // Generalized API Endpoint function that takes a function of the form:
   //      func(responseJson:obj):void
   // that defines what to do with the JsonObject when it is returned.
-  askSpotify(apiRequestOnSuccess, endpoint:string):void
+  askSpotify(apiRequestOnSuccess, endpoint:string, method:string, body:object):void
   {
     //Due to the HttpRequest being asynchronous, I must pass the observable and 
     //subscribe to it in the component so that the Json object is not returned 
     //after the function exits.
     //Make First Request 
-    this.loginService.getAtAPIExtension(endpoint).subscribe(responseJson => 
+    this.loginService.getAtAPIExtension(endpoint, method, body).subscribe(responseJson => 
     {
       //ON Success
       apiRequestOnSuccess(responseJson);
@@ -81,7 +81,7 @@ export class DashboardComponent implements OnInit
           //Token Refreshed
           this.loginService.onSuccessGetRefreshedToken(responseJson);
           //Try API call again with refreshed token. (2nd attempt)
-          this.loginService.getAtAPIExtension(endpoint).subscribe(responseJson => 
+          this.loginService.getAtAPIExtension(endpoint, method, body).subscribe(responseJson => 
           {
             //On success of second attempt.
             apiRequestOnSuccess(responseJson);
@@ -114,7 +114,7 @@ export class DashboardComponent implements OnInit
           {
             //On success of new token/refresh token, try API call again.
             this.loginService.onSuccessGetNewToken(responseJson);
-            this.loginService.getAtAPIExtension(endpoint).subscribe(responseJson => 
+            this.loginService.getAtAPIExtension(endpoint, method, body).subscribe(responseJson => 
             {
               //On success of second attempt.
               apiRequestOnSuccess(responseJson);
