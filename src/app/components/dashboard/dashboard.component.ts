@@ -16,10 +16,40 @@ export class DashboardComponent implements OnInit
   spotifyJsonResponse:any;
   apiExtension:HTMLInputElement;
   
-  constructor(private loginService:LoginService, private utilService:UtilService, private router:Router) { }
+  constructor(private loginService:LoginService, private utilService:UtilService, private activatedRoute:ActivatedRoute, private router:Router) { }
 
-  ngOnInit() {
-    this.authorizationCode = this.loginService.getcode();
+  ngOnInit() 
+  {
+    //this.authorizationCode = this.loginService.getcode();
+      //Check url for code from login.
+    this.activatedRoute.queryParams.subscribe(params =>
+    {
+      //User Accepted
+      if(params['code'])
+      {
+        this.loginService.code = params['code'];
+        this.loginService.getNewToken().subscribe(responseJson => 
+        {
+          this.loginService.accessToken = responseJson.access_token;
+          this.loginService.tokenType = responseJson.token_type;
+          this.loginService.scope = responseJson.scope;
+          this.loginService.expireTime = responseJson.expires_in;
+          this.loginService.refreshToken = responseJson.refresh_token;
+          this.router.navigate(['/dashboard']);
+        }, error => 
+        {
+          console.log(error.error);
+          console.log(error.error.message);
+          this.loginService.code = "";
+          this.router.navigate(['/']);
+        });
+      }
+      //User did Not Accept
+      else if(params['error'] == 'access_denied')
+      {
+        console.log("User refused to let us use their acc.");
+      }
+    });
     if(this.authorizationCode)
     {
       console.log("got a code");
@@ -31,6 +61,8 @@ export class DashboardComponent implements OnInit
       this.loggedIn = false;
     }
   }
+
+  
  
  
   // Function that is run on the returned object when askSpotify Hits an endpoint.

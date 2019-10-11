@@ -24,18 +24,21 @@ import { isNull } from 'util';
 export class LoginService 
 {
   // VARIABLE DECLARATIONS
-  proxy:string = "https://cors-anywhere.herokuapp.com/"
+  proxy:string = "https://cors-anywhere.herokuapp.com/";
+  // proxy:string = "";
   headers:object;
   body:object;
   getBody:HttpParams;
   getHeaders:HttpHeaders;
   method:string;
 
-  baseURL:string;
+  // baseURL:string;
+  // redirectUrl:string = "http://d1pdaq98wp5pf3.cloudfront.net/dashboard";
   redirectUrl:string = "http://localhost:4200/dashboard";
   clientID:string = "ac97261ac3e74255a9f5b928e6456d9d";
   clientSecret:string = "ab01f29469964e4ab5e5a7133410b732";
   responseType:string;
+  baseURL:string;
   code:string; //Returned when the user logs in.
   url:string; // Base url and any extension.
   grantType:string;
@@ -252,7 +255,7 @@ export class LoginService
 
 
   // Use the token to make an API call to Spotify.
-  // getAtAPIExtension(extension:string):Observable<object>
+  // getAtAPIExtension(extension:string,method:string, abody:object):Observable<object>
   // {
   //   this.baseURL = "https://api.spotify.com";
 
@@ -288,8 +291,6 @@ export class LoginService
 
     //Set Body
     this.getBody = new HttpParams()
-      .set('endpoint', this.baseURL + extension)
-      .set('method', method);
     //Conditional Body elements.
     if(!isNull(abody))
     {
@@ -298,49 +299,37 @@ export class LoginService
         this.getBody = this.getBody.set(element, abody[element])
       }
     }
+    this.url = this.baseURL + extension;
     //objects to hold headers and body. Passed to HttpClient.get
     const options = { params: this.getBody, headers: this.getHeaders }
     //Determine which Servlet Endpoint to hit.
     if(method == "GET") //endpoint for Any Get request
     {
-      this.url = "";
+      //Return observable for get request.
+      return this.http.get(this.proxy + this.url, options);
     }
     else if(method == "POST")
     {
-      if(extension.includes("tracks"))// /v1/playlists/{playlist_id}/tracks (Add Tracks to a Playlist)
-      {
-        this.url = "";
-      }
-      else if(extension.includes("users"))// /v1/user/{user_id}/playlists (Create a Playlist)
-      {
-        this.url = "";
-      }
-      else // bad input
-      {
-        this.url = "";
-      }
+      //Return observable for get request.
+      return this.http.post(this.proxy + this.url, options);
     }
     else if(method == "PUT") // /v1/playlists/{playlist_id}/tracks (Reorder Playlist's Tracks.)
     {
-      this.url = "";
+      //Return observable for get request.
+      return this.http.put(this.proxy + this.url, options);
     }
     else if(method == "DELETE") // /v1/playlists/{playlist_id}/tracks (Delete tracks from a playlist)
     {
-      this.url = "";
+      //Return observable for get request.
+      return this.http.delete(this.proxy + this.url, options);
     }
-    else // bad input
-    {
-      this.url = "";
-    }
-
-    if(this.url == "") // Bad input
+    else// Bad Input
     {
       console.log("ERROR: login.service.ts :getAtAPIExtension : bad endpoint or method.")
       console.log("method = <" + method + ">");
       console.log("endpoint = <" + extension + ">");
+      return null;
     }
-    //Return observable for get request.
-    return this.jsonResponseObj = this.http.get(this.url + extension, options)
   }
 
   // When your token expires, this function uses the refresh token to get a 
