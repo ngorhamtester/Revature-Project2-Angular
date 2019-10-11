@@ -1,4 +1,4 @@
-<p>dashboard works!</p>
+<!-- <p>dashboard works!</p>
 
 
 <app-song-player></app-song-player>
@@ -10,4 +10,37 @@
 
         Response:{{spotifyAPIResponse}}<div id="jsonResponseContainer"></div>
 
-</pre>
+</pre> -->
+
+<div id = "base">
+        <p>Welcome To The Sortify Dashboard</p>
+        <div id = "loaded_playlists" class="table table-dark">
+            <h3 id="myPlaylistsH3">My Playlists</h3>
+                <table id="myPlaylistsTbl" >            
+                        <tbody>
+                                
+                                <tr *ngFor="let pn of playlist_names"><td> <input type="checkbox" name="track"> {{pn}}<br>
+                                </td></tr>
+                            <!-- <tr *ngFor="let pn of playlist_names">
+                                <td >{{pn}}</td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+        </div>
+        <div id="loadedSongs">
+        <form>
+            <h4>Songs in this playlist: </h4>
+            <table id=songsToAddTbl>
+                <tbody>
+                    <tr *ngFor="let tn of track_names">
+                        <td>{{tn}}</td>
+                    </tr>
+                </tbody>
+
+
+            </table>
+
+    
+        </form>
+        </div>
+</div>
