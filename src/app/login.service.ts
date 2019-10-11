@@ -68,7 +68,7 @@ export class LoginService {
     + 'redirect_uri=' + this.redirect_uri;
     
     //console.log("URL: " + url);
-    this.router.navigate(["login", {externalUrl: url}], {skipLocationChange: true}); 
+    this.router.navigate(["login", {externalUrl: url}], {skipLocationChange: true});  
   }
 
 
