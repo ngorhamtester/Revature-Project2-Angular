@@ -18,8 +18,13 @@ export class DashboardComponent implements OnInit
 
   obj:string;
   jsonObj:JSON;
-  playlist_names:string[] = [];
-  track_names:string[] = [];
+  playlist_names:object[] = [];
+  track_names:{ 'name':string, 'id': string }[] = [];
+  public song:Object;
+
+  playlist_objects:object[] = []
+  checked_values:string[]=[];
+
   
   constructor(private loginService:LoginService, private utilService:UtilService, private activatedRoute:ActivatedRoute, private router:Router) { }
 
@@ -44,7 +49,7 @@ export class DashboardComponent implements OnInit
           // this.loadPlaylistArray();
           // this.loadTrackArray();
           this.askSpotifyLoadPlaylistArray();
-          this.askSpotifyLoadTrackArray();
+          // this.askSpotifyLoadTrackArray();
           console.log(window.location.href);
           console.log("URL MF PARAMS: " + this.getUrlElements("code"));
           
@@ -79,18 +84,21 @@ export class DashboardComponent implements OnInit
     var urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(target);
   }
-
+  //Injectable function that handles an array of playlists returned from spotify
   loadPlaylistArrayhandler = (test) =>
   {
     console.log("from the playlist json obj:");
     for(let i = 0; i < test.items.length; i++) {
       console.log(test.items[i].name+ " " + test.items[i].tracks.href );
-      let tmp = test.items[i].name;
-      this.playlist_names.push(tmp);
+      let tmpObj = {'name':test.items[i].name,
+                    'id':test.items[i]['id'],
+                    'selected': [false]}
+      this.playlist_objects.push(tmpObj);
     }
     console.log("from the playlist array:");
-    for(let i in this.playlist_names) {
-      console.log(test.items[i].name);
+    for(let i in this.playlist_objects) 
+    {
+      console.log(this.playlist_objects[i] ['name']+ ' : ' +this.playlist_objects[i]['id'] + ':' + +this.playlist_objects[i]['selected']);
     }
   }
 
@@ -98,27 +106,101 @@ export class DashboardComponent implements OnInit
   { 
     this.askSpotify(this.loadPlaylistArrayhandler, "/v1/me/playlists", "GET", null);
   }
-
-  loadTrackArrayhandler = (song):void =>
-  {
-    console.log("from the tracks json obj:");
-    for(let i = 0; i < song.limit; i++) {
-      console.log(song.items[i].track.name);
-      let tmp = song.items[i].track.name;
-      this.track_names.push(tmp);
-    }
-
-    console.log("from the tracks array:");
+  //Injectable function that handles an array of tracks.
+  // loadTrackArrayhandler = (song):void =>
+  // {
+  //   console.log("from the tracks json obj:");
+  //   for(let i = 0; i < song.limit; i++) {
+  //     console.log(song.items[i].track.name);
+  //     let tmp = song.items[i].track.name;
+  //     this.track_names.push(tmp);
+  //   }
   
-    for(let i in this.track_names) {
-       console.log("TRACK NAME: "+this.track_names[i]);
-     }
+  //   for(let i in this.track_names) {
+  //      console.log("TRACK NAME: "+this.track_names[i]);
+  //   }
+  // }
+
+
+  // askSpotifyLoadTrackArray():void
+  // {
+  //   this.askSpotify(this.loadPlaylistArrayhandler, "/v1/playlists/"+ this.playlist_objects[0]['id'] +"/tracks", "GET", null)
+  // }
+
+  populateNewPlaylist()
+  {
+  this.playlist_names = [];
+  for(let i in this.playlist_objects) 
+  {
+    if(this.playlist_objects[i]['selected'] == true) 
+    {
+      console.log("added: "+this.playlist_objects[i]['name']);
+      this.playlist_names.push(this.playlist_objects[i]['name']);
+      this.askSpotifyAddTracksToList(this.playlist_objects[i]['id']);
+    } 
+    else
+    {
+    console.log("nope");      
+    }
+  }}
+
+
+  addTracksToListHandler = (tracks) =>
+  {
+    for(let i = 0; i < tracks['items'].length; i++)
+    {
+      this.track_names.push({'name': tracks['items'][i]['track']['name'], 'id': tracks['items'][i]['track']['id']});
+    }
+  }
+  askSpotifyAddTracksToList(playlistID:string)
+  {
+    this.askSpotify(this.addTracksToListHandler, "/v1/playlists/"+ playlistID +"/tracks", "GET", null)
   }
 
-  askSpotifyLoadTrackArray():void
-  { 
-    this.askSpotify(this.loadPlaylistArrayhandler, "/v1/playlists/54TJJfZ0s48JmS5ZIUN9T5/tracks", "GET", null);
-  }
+  //Injectable function that gets a playlist and eliminates the duplicates.
+  // eliminateDuplicateshandler = (tracks):void =>
+  // {
+  //   let temparray: { 'uri': string, 'positions': number[] }[];
+  //   let temp:number[];
+  //   let uris:string[];
+  //   let uri:string;
+  //   for(let track of tracks['items'])
+  //   {        
+  //     let alreadyDeleted:boolean = false;
+  //     uri = tracks['items'][track]['track']['uri'];
+  //     for(let u of uris)
+  //     {
+  //       if(uri === u)
+  //       {
+  //         alreadyDeleted = true;
+  //         break;
+  //       }
+  //     }
+  //     if(!alreadyDeleted && track != tracks['items'].length)
+  //     {
+  //       for(let i = track + 1; i < tracks['items'].length; i++)
+  //       {
+  //         temp = [];
+  //         if(tracks['items'][i]['track']['id'] === tracks['items'][track]['track']['id'])
+  //         {
+  //           //If there is a duplicate track, add it to the list of tracks to delete from the playlist.
+  //           temp.push(i);
+  //         }
+  //       }
+  //       if(temp.length > 0)
+  //       {
+  //         //Duplicates found
+  //         temparray.push({'uri': uri, 'positions': temp});
+  //       }
+  //     }
+  //   }
+  //   this.askSpotify( null, "/v1/playlists/{playlist_id}/", "DELETE", {'tracks':temparray});
+  // }
+
+  // askSpotifyLoadTrackArray():void
+  // { 
+  //   this.askSpotify(this.loadPlaylistArrayhandler, "/v1/playlists/54TJJfZ0s48JmS5ZIUN9T5/tracks", "GET", null);
+  // }
 
 
  
