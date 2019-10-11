@@ -9,7 +9,6 @@
                                     <!-- <td > <input type="checkbox" [(ngModel)]="playlist_objects[i].name" >  -->
                                     <td > <input type="checkbox" [checked]="po.selected" (change)="po.selected = !(po.selected)"> 
                                         {{po.name}}
-                                        {{po.selected}} 
                                     </td>
                                                                       
                                 </tr>
@@ -43,7 +42,8 @@
                     </tr>
                 </tbody>
             </table>
-            <button type="button" (click)="mergeLists()">Merge</button>
 
         </div>
+        <input type ="text"  placeholder="Enter new playlist name"  id="newPlayid" name="newPlayname">
+            <button type="button" (click)="mergeLists()">Merge</button>
 </div>

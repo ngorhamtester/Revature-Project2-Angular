@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent implements OnInit {
 
-  public song:Object;
+  obj:string;
   jsonObj:JSON;
   playlist_objects:object[] = []
   playlist_names:string[] = [];
@@ -18,10 +18,8 @@ export class DashboardComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.song=this.songo;
-    this.loadTrackByFromObj(this.songo);
    this.loadPlaylistArray();
-   this.loadTrackArray();
+   //this.loadTrackArray();
   //  console.log(window.location.href);   
    
   }
@@ -38,10 +36,8 @@ export class DashboardComponent implements OnInit {
     this.playlist_names = [];
     for(let i in this.playlist_objects) {
     if(this.playlist_objects[i]['selected'] == true) {
-      console.log("added: "+this.playlist_objects[i]['name']);
       this.playlist_names.push(this.playlist_objects[i]['name']);
-    } else
-      console.log("nope");      
+    }
   }}
 
   // public loadSelectedPlaylistNames(){
@@ -91,23 +87,23 @@ export class DashboardComponent implements OnInit {
      }
   }
 
+  mergeLists() {
+    this.loadTrackArray();
+    let new_pl_name = ((document.getElementById("newPlayid") as HTMLInputElement).value);
+    console.log(new_pl_name);
+ 
+  }
+
+
   // TODO
-  // // convert the above methods to reusable methods
-  // public loadTrackByFromObj(trackObj:Object) {
-  //   console.log("from the tracks json obj method:");
-  //   for(let i = 0; i < trackObj.limit; i++) {
-  //     console.log(trackObj.items[i].track.name);
-  //     let tmp = trackObj.items[i].track.name;
-  //     this.track_names.push(tmp);
-  //   } 
-  //   for(let i in this.track_names) {
-  //      console.log("TRACK NAME: "+this.track_names[i]);
-  //    }
+  // convert the above methods to reusable methods
+  // public loadTrackById(trackObj:JSON) {
+
   // }
 
 
 
-  testo = {
+  test = {
     "href": "https://api.spotify.com/v1/users/jmrtn77/playlists?offset=0&limit=10",
     "items": [
       {
@@ -472,7 +468,7 @@ export class DashboardComponent implements OnInit {
     "total": 28
   }
 
-  songo = {
+  song = {
     "href": "https://api.spotify.com/v1/playlists/6alMpTsBKbMzrqulQrwWw5/tracks?offset=0&limit=3",
     "items": [
       {
