@@ -3,30 +3,47 @@
         <div id = "loaded_playlists" class="table table-dark">
             <h3 id="myPlaylistsH3">My Playlists</h3>
                 <table id="myPlaylistsTbl" >            
-                        <tbody>
-                                
-                                <tr *ngFor="let pn of playlist_names"><td> <input type="checkbox" name="track"> {{pn}}<br>
-                                </td></tr>
+                        <tbody class="t_body">
+                                <tr *ngFor="let po of playlist_objects"> 
+                                <!-- <tr *ngFor="let po of playlist_objects;let i = index"> -->
+                                    <!-- <td > <input type="checkbox" [(ngModel)]="playlist_objects[i].name" >  -->
+                                    <td > <input type="checkbox" [checked]="po.selected" (change)="po.selected = !(po.selected)"> 
+                                        {{po.name}}
+                                        {{po.selected}} 
+                                    </td>
+                                                                      
+                                </tr>
                             <!-- <tr *ngFor="let pn of playlist_names">
-                                <td >{{pn}}</td>
+                                <td >{{pn}}</t  d>
                             </tr> -->
                         </tbody>
+                        <button type="button" (click)="populateNewPlaylist()">Populate New Playlist</button>
                     </table>
+                    
         </div>
+        
+        <div id="playlistsSelectedDiv">
+            
+                <h4>Playlists selected: </h4>
+                <table id=playlistsSelected>
+                    <tbody >
+                        <tr *ngFor="let pn of playlist_names">
+                            <td>{{pn}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         <div id="loadedSongs">
-        <form>
+            
             <h4>Songs in this playlist: </h4>
             <table id=songsToAddTbl>
-                <tbody>
+                <tbody >
                     <tr *ngFor="let tn of track_names">
                         <td>{{tn}}</td>
                     </tr>
                 </tbody>
-
-
             </table>
+            <button type="button" (click)="mergeLists()">Merge</button>
 
-    
-        </form>
         </div>
 </div>

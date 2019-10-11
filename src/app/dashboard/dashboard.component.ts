@@ -8,47 +8,73 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent implements OnInit {
 
-  obj:string;
+  public song:Object;
   jsonObj:JSON;
+  playlist_objects:object[] = []
   playlist_names:string[] = [];
   track_names:string[] = [];
-
-  //todo make an object to hold playlist and and array of tracks
-
-
+  checked_values:string[]=[];
 
   constructor() { }
 
-
   ngOnInit() {
+    this.song=this.songo;
+    this.loadTrackByFromObj(this.songo);
    this.loadPlaylistArray();
    this.loadTrackArray();
-   console.log(window.location.href);
-   console.log("URL MF PARAMS: " + this.getUrlElements("code"));
+  //  console.log(window.location.href);   
    
   }
 
 
-  public getUrlElements(target:string) {
-    var urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(target);
+  // public getUrlElements(target:string) {
+  //   var urlParams = new URLSearchParams(window.location.search);
+  //   return urlParams.get(target);
 
-  }
- 
+  // }
 
 
+  populateNewPlaylist(){
+    this.playlist_names = [];
+    for(let i in this.playlist_objects) {
+    if(this.playlist_objects[i]['selected'] == true) {
+      console.log("added: "+this.playlist_objects[i]['name']);
+      this.playlist_names.push(this.playlist_objects[i]['name']);
+    } else
+      console.log("nope");      
+  }}
+
+  // public loadSelectedPlaylistNames(){
+  //   console.log("selected playlist names:");
+  //   for(let i = 0; i < this.playlist_names.length; i++) {
+  //     console.log(this.playlist_names[i]['name']);
+  //     let tmp= this.playlist_names[i]['name'];
+  //     this.track_names.push(tmp);
+  //   }
+
+  //   console.log("from the tracks array:");
+  
+  //   for(let i in this.track_names) {
+  //      console.log("TRACK NAME: "+this.track_names[i]);
+  //    }
+  // }
 
   public loadPlaylistArray(){
     console.log("from the playlist json obj:");
     for(let i = 0; i < this.test.items.length; i++) {
       console.log(this.test.items[i].name+ " " + this.test.items[i].tracks.href );
-      let tmp = this.test.items[i].name;
-      this.playlist_names.push(tmp);
+      //let tmp = this.test.items[i].name;
+      let tmpObj = {'name':this.test.items[i].name,
+                    'id':this.test.items[i]['id'],
+                    'selected': [false]}
+      //this.playlist_names.push(tmp);
+ 
+      this.playlist_objects.push(tmpObj);
     }
 
     console.log("from the playlist array:");
-    for(let i in this.playlist_names) {
-      console.log(this.test.items[i].name);
+    for(let i in this.playlist_objects) {
+      console.log(this.playlist_objects[i] ['name']+ ' : ' +this.playlist_objects[i]['id'] + ':' + +this.playlist_objects[i]['selected']);
     }
   }
    
@@ -59,16 +85,29 @@ export class DashboardComponent implements OnInit {
       console.log(this.song.items[i].track.name);
       let tmp = this.song.items[i].track.name;
       this.track_names.push(tmp);
-    }
-
-    console.log("from the tracks array:");
-  
+    } 
     for(let i in this.track_names) {
        console.log("TRACK NAME: "+this.track_names[i]);
      }
   }
 
-  test = {
+  // TODO
+  // // convert the above methods to reusable methods
+  // public loadTrackByFromObj(trackObj:Object) {
+  //   console.log("from the tracks json obj method:");
+  //   for(let i = 0; i < trackObj.limit; i++) {
+  //     console.log(trackObj.items[i].track.name);
+  //     let tmp = trackObj.items[i].track.name;
+  //     this.track_names.push(tmp);
+  //   } 
+  //   for(let i in this.track_names) {
+  //      console.log("TRACK NAME: "+this.track_names[i]);
+  //    }
+  // }
+
+
+
+  testo = {
     "href": "https://api.spotify.com/v1/users/jmrtn77/playlists?offset=0&limit=10",
     "items": [
       {
@@ -433,7 +472,7 @@ export class DashboardComponent implements OnInit {
     "total": 28
   }
 
-  song = {
+  songo = {
     "href": "https://api.spotify.com/v1/playlists/6alMpTsBKbMzrqulQrwWw5/tracks?offset=0&limit=3",
     "items": [
       {

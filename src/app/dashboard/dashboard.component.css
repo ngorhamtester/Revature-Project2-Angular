@@ -1,6 +1,6 @@
- /* #base {
-
-}  */
+  /* #base {
+ 
+}   */
 #myPlaylistsTbl {
     width: 25%;
     background-color: rgb(0, 0, 0);
@@ -9,14 +9,14 @@
 
 #myPlaylistsH3 {
     width: 25%;
-    background-color: rgb(46, 230, 9);
     padding-top:1%;
     padding-bottom:1%;
     text-align: center;
     color: black ;
 }
 
-#loadedSongs {
-    
+#loaded-playlists {
+    background-color: black;
+
 
 }
